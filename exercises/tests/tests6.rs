@@ -7,7 +7,7 @@
 // Execute `rustlings hint tests6` or use the `hint` watch subcommand for a
 // hint.
 
-// I AM NOT DONE
+
 
 struct Foo {
     a: u128,
@@ -17,29 +17,54 @@ struct Foo {
 /// # Safety
 ///
 /// The `ptr` must contain an owned box of `Foo`.
-unsafe fn raw_pointer_to_box(ptr: *mut Foo) -> Box<Foo> {
-    // SAFETY: The `ptr` contains an owned box of `Foo` by contract. We
-    // simply reconstruct the box from that pointer.
-    let mut ret: Box<Foo> = unsafe { ??? };
-    todo!("The rest of the code goes here")
-}
+unsafe fn raw_pointer_to_box(ptr: *mut Foo) -> Box<Foo> {  
 
-#[cfg(test)]
-mod tests {
-    use super::*;
-    use std::time::Instant;
+    // 使用 ptr::from_raw 从原始指针创建 Box  
 
-    #[test]
-    fn test_success() {
-        let data = Box::new(Foo { a: 1, b: None });
+    let ret: Box<Foo> = Box::from_raw(ptr);  
 
-        let ptr_1 = &data.a as *const u128 as usize;
-        // SAFETY: We pass an owned box of `Foo`.
-        let ret = unsafe { raw_pointer_to_box(Box::into_raw(data)) };
+    ret  
 
-        let ptr_2 = &ret.a as *const u128 as usize;
+}  
 
-        assert!(ptr_1 == ptr_2);
-        assert!(ret.b == Some("hello".to_owned()));
-    }
+#[cfg(test)]  
+
+mod tests {  
+
+    use super::*;  
+
+  
+
+    #[test]  
+
+    fn test_success() {  
+
+        // 初始化 Foo 时将 b 字段设置为 Some("hello")  
+
+        let data = Box::new(Foo { a: 1, b: Some("hello".to_owned()) });  
+
+  
+
+        let ptr_1 = &data.a as *const u128 as usize;  
+
+        // 安全性：我们传递一个 Foo 的拥有盒  
+
+        let ret = unsafe { raw_pointer_to_box(Box::into_raw(data)) };  
+
+  
+
+        let ptr_2 = &ret.a as *const u128 as usize;  
+
+  
+
+        // 确保两个指针相同（即它们指向相同的内存地址）  
+
+        assert_eq!(ptr_1, ptr_2);  
+
+        // 确保 ret 的 b 字段是我们设置的值  
+
+        assert_eq!(ret.b, Some("hello".to_owned()));  
+
+    }  
+
 }

@@ -34,22 +34,29 @@
 // Execute `rustlings hint tests7` or use the `hint` watch subcommand for a
 // hint.
 
-// I AM NOT DONE
-
+// tests7.rs 
 fn main() {}
 
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn test_success() {
-        let timestamp = std::time::SystemTime::now()
-            .duration_since(std::time::UNIX_EPOCH)
-            .unwrap()
-            .as_secs();
-        let s = std::env::var("TEST_FOO").unwrap();
-        let e: u64 = s.parse().unwrap();
-        assert!(timestamp >= e && timestamp < e + 10);
-    }
+#[cfg(test)]  
+mod tests {  
+    use super::*;  
+    use std::fs::File;  
+    use std::io::Read;  
+  
+    #[test]  
+    fn test_success() {  
+        // Read the timestamp from the file set by build.rs  
+        let timestamp_file = std::env::var("TEST_FOO_FILE").unwrap();  
+        let mut file = File::open(&timestamp_file).unwrap();  
+        let mut contents = String::new();  
+        file.read_to_string(&mut contents).unwrap();  
+        let e: u64 = contents.trim().parse().unwrap();  
+  
+        let timestamp = std::time::SystemTime::now()  
+            .duration_since(std::time::UNIX_EPOCH)  
+            .unwrap()  
+            .as_secs();  
+  
+        assert!(timestamp >= e && timestamp < e + 10);  
+    }  
 }
